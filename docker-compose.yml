@@ -1,0 +1,20 @@
+services:
+
+  api:
+    build: .
+    container_name: controle_insumos_api
+    restart: always
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    networks:
+      - rede_api
+
+
+networks:
+  rede_api:
+    external: true
