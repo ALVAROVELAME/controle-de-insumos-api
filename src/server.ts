@@ -1,173 +1,31 @@
 import Fastify from "fastify";
-import dotenv from "dotenv";
-
+import { env } from "./config/env";
 import { conectarMongo } from "./database/mongo";
-import { Nome } from "./models/Nome";
+import { errorHandler } from "./middlewares/errorHandler";
+import { authRoutes } from "./routes/auth.routes";
+import { usuariosRoutes } from "./routes/usuarios.routes";
 
+const app = Fastify({ logger: true });
 
-dotenv.config();
+app.setErrorHandler(errorHandler);
 
+// Health check
+app.get("/", async () => ({ status: "API controle de insumos funcionando" }));
 
-const app = Fastify({
-  logger: true
-});
-
-
-
-app.get("/", async () => {
-
-  return {
-    status: "API controle de insumos funcionando"
-  };
-
-});
-
-
-
-app.post("/nomes", async (request, reply) => {
-
-  try {
-
-    const body = request.body as {
-      nome?: string;
-    };
-
-
-    if (!body.nome) {
-
-      return reply.status(400).send({
-        erro: "O campo nome é obrigatório"
-      });
-
-    }
-
-
-
-    const novoNome = await Nome.create({
-
-      nome: body.nome
-
-    });
-
-
-
-    return reply.status(201).send({
-
-      mensagem: "Nome cadastrado",
-
-      dados: novoNome
-
-    });
-
-
-
-  } catch (erro) {
-
-    request.log.error(erro);
-
-
-    return reply.status(500).send({
-
-      erro: "Erro interno do servidor"
-
-    });
-
-  }
-
-});
-
-
-
-
-
-app.get("/nomes", async (request, reply) => {
-
-  try {
-
-
-    const nomes = await Nome.find();
-
-
-    return {
-
-      nomes
-
-    };
-
-
-  } catch (erro) {
-
-
-    request.log.error(erro);
-
-
-    return reply.status(500).send({
-
-      erro: "Erro ao buscar nomes"
-
-    });
-
-
-  }
-
-});
-
-
-
-
-
+// Rotas
+app.register(authRoutes);
+app.register(usuariosRoutes);
 
 async function iniciar() {
-
-
   try {
-
-
     await conectarMongo();
 
-
-
-    const porta = Number(process.env.PORT);
-
-
-
-    if (!porta) {
-
-      throw new Error("PORT não configurada no .env");
-
-    }
-
-
-
-
-    await app.listen({
-
-      host: "0.0.0.0",
-
-      port: porta
-
-    });
-
-
-
-    console.log(`API rodando na porta ${porta}`);
-
-
-
+    await app.listen({ host: "0.0.0.0", port: env.port });
+    console.log(`API rodando na porta ${env.port}`);
   } catch (erro) {
-
-
     app.log.error(erro);
-
     process.exit(1);
-
-
   }
-
-
 }
-
-
-
 
 iniciar();

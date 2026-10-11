@@ -1,19 +1,33 @@
+# Dependências (reinstaladas no build via npm ci)
 node_modules
+
+# Git
 .git
 .gitignore
 .github
 
+# Build (gerado dentro do container)
 dist
 
+# Ambiente (nunca vai pra imagem)
 .env
 .env.*
+!.env.example
 
+# Testes / cobertura
 coverage
 
+# IDEs
 .vscode
 .idea
 
+# Docker (não precisa ir pra dentro da imagem)
 Dockerfile
 docker-compose.yml
 
+# Logs
 *.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
