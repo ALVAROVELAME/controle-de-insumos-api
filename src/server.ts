@@ -97,7 +97,7 @@ async function iniciar() {
     await app.listen({ host: "0.0.0.0", port: env.port });
     console.log(`API rodando na porta ${env.port}`);
     console.log(`Swagger disponivel em ${env.appBaseUrl}/docs`);
-    console.log(`CORS liberado para: ${env.corsOrigin}`);
+    console.log(`CORS liberado para: ${env.corsOrigin.join(", ")}`);
   } catch (erro) {
     app.log.error(erro);
     process.exit(1);
