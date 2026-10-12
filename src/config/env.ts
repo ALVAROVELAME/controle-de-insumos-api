@@ -35,6 +35,8 @@ export const env = {
     audience: optional("JWT_AUDIENCE", "controle-de-insumos-api"),
   },
 
+  corsOrigin: optional("CORS_ORIGIN", "http://localhost:5173"),
+
   appBaseUrl: optional("APP_BASE_URL", "http://localhost:3000"),
   appFrontendUrl: optional("APP_FRONTEND_URL", "http://localhost:5173"),
 };

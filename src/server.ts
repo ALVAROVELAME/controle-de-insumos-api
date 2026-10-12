@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { env } from "./config/env";
@@ -14,14 +15,25 @@ app.setErrorHandler(errorHandler);
 async function iniciar() {
   try {
     // ------------------------------------------------------------
-    // 1. Swagger (deve ser registrado ANTES das rotas)
+    // 1. CORS (deve ser registrado ANTES das rotas)
+    // ------------------------------------------------------------
+    await app.register(cors, {
+      origin: env.corsOrigin,
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      maxAge: 86400,
+    });
+
+    // ------------------------------------------------------------
+    // 2. Swagger (deve ser registrado ANTES das rotas)
     // ------------------------------------------------------------
     await app.register(swagger, {
       openapi: {
         openapi: "3.0.3",
         info: {
           title: "Controle de Insumos API",
-          description: "API de controle de insumos com autenticação JWT",
+          description: "API de controle de insumos com autenticacao JWT",
           version: "1.0.0",
         },
         servers: [
@@ -33,7 +45,7 @@ async function iniciar() {
               type: "http",
               scheme: "bearer",
               bearerFormat: "JWT",
-              description: "Cole o token JWT (sem o prefixo 'Bearer ').",
+              description: "Cole o token JWT (sem o prefixo Bearer).",
             },
           },
         },
@@ -50,14 +62,14 @@ async function iniciar() {
     });
 
     // ------------------------------------------------------------
-    // 2. Health check
+    // 3. Health check
     // ------------------------------------------------------------
     app.get(
       "/",
       {
         schema: {
           tags: ["Health"],
-          summary: "Health check público",
+          summary: "Health check publico",
           response: {
             200: {
               type: "object",
@@ -72,19 +84,20 @@ async function iniciar() {
     );
 
     // ------------------------------------------------------------
-    // 3. Rotas
+    // 4. Rotas
     // ------------------------------------------------------------
     await app.register(authRoutes);
     await app.register(usuariosRoutes);
 
     // ------------------------------------------------------------
-    // 4. Banco + Listen
+    // 5. Banco + Listen
     // ------------------------------------------------------------
     await conectarMongo();
 
     await app.listen({ host: "0.0.0.0", port: env.port });
     console.log(`API rodando na porta ${env.port}`);
     console.log(`Swagger disponivel em ${env.appBaseUrl}/docs`);
+    console.log(`CORS liberado para: ${env.corsOrigin}`);
   } catch (erro) {
     app.log.error(erro);
     process.exit(1);
