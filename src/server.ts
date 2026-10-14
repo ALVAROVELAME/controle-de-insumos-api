@@ -7,6 +7,9 @@ import { conectarMongo } from "./database/mongo";
 import { errorHandler } from "./middlewares/errorHandler";
 import { authRoutes } from "./routes/auth.routes";
 import { usuariosRoutes } from "./routes/usuarios.routes";
+import { insumosRoutes } from "./routes/insumos.routes";
+import { fornecedoresRoutes } from "./routes/fornecedores.routes";
+import { movimentacoesRoutes } from "./routes/movimentacoes.routes";
 
 const app = Fastify({ logger: true });
 
@@ -88,6 +91,9 @@ async function iniciar() {
     // ------------------------------------------------------------
     await app.register(authRoutes);
     await app.register(usuariosRoutes);
+    await app.register(insumosRoutes);
+    await app.register(fornecedoresRoutes);
+    await app.register(movimentacoesRoutes);
 
     // ------------------------------------------------------------
     // 5. Banco + Listen

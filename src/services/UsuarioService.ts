@@ -2,6 +2,9 @@ import { randomUUID } from "crypto";
 import { ConflictError, UnauthorizedError } from "../errors/AppError";
 import { CadastroPendenteRepository } from "../repositories/CadastroPendenteRepository";
 import { UsuarioRepository } from "../repositories/UsuarioRepository";
+import { InsumoRepository } from "../repositories/InsumoRepository";
+import { FornecedorRepository } from "../repositories/FornecedorRepository";
+import { MovimentacaoRepository } from "../repositories/MovimentacaoRepository";
 import { PasswordHasher } from "./PasswordHasher";
 import { EmailService } from "./EmailService";
 import { UsuarioCadastroDTOType } from "../dtos/usuarios/UsuarioCadastroDTO";
@@ -39,6 +42,14 @@ export const UsuarioService = {
     if (!PasswordHasher.verify(senha, usuario.senhaHash)) {
       throw new UnauthorizedError("Senha incorreta. Exclusao cancelada.");
     }
+
+    const usuarioId = String(usuario._id);
+
+    // Cascade: apaga todos os dados do usuario
+    // Ordem importa: movimentacoes -> insumos -> fornecedores
+    await MovimentacaoRepository.deleteAllByUsuario(usuarioId);
+    await InsumoRepository.deleteAllByUsuario(usuarioId);
+    await FornecedorRepository.deleteAllByUsuario(usuarioId);
 
     const pendente = await CadastroPendenteRepository.findByEmail(usuario.email);
     if (pendente) await CadastroPendenteRepository.delete(pendente);
