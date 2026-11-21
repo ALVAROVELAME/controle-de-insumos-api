@@ -1,14 +1,14 @@
 import { randomUUID } from "crypto";
-import { ConflictError, UnauthorizedError } from "../errors/AppError";
-import { CadastroPendenteRepository } from "../repositories/CadastroPendenteRepository";
-import { UsuarioRepository } from "../repositories/UsuarioRepository";
-import { InsumoRepository } from "../repositories/InsumoRepository";
-import { FornecedorRepository } from "../repositories/FornecedorRepository";
-import { MovimentacaoRepository } from "../repositories/MovimentacaoRepository";
-import { PasswordHasher } from "./PasswordHasher";
-import { EmailService } from "./EmailService";
-import { UsuarioCadastroDTOType } from "../dtos/usuarios/UsuarioCadastroDTO";
-import { IUsuario } from "../models/Usuario";
+import { ConflictError, UnauthorizedError } from "../../errors/AppError";
+import { CadastroPendenteRepository } from "../../repositories/conta/CadastroPendenteRepository";
+import { UsuarioRepository } from "../../repositories/conta/UsuarioRepository";
+import { InsumoRepository } from "../../repositories/estoque/InsumoRepository";
+import { FornecedorRepository } from "../../repositories/estoque/FornecedorRepository";
+import { MovimentacaoRepository } from "../../repositories/estoque/MovimentacaoRepository";
+import { PasswordHasher } from "../PasswordHasher";
+import { EmailService } from "../EmailService";
+import { UsuarioCadastroDTOType } from "../../dtos/conta/UsuarioCadastroDTO";
+import { IUsuario } from "../../models/conta/Usuario";
 
 export const UsuarioService = {
   async cadastrar(dto: UsuarioCadastroDTOType) {

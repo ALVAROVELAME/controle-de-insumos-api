@@ -4,11 +4,11 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { env } from "./config/env";
 import { errorHandler } from "./middlewares/errorHandler";
-import { authRoutes } from "./routes/auth.routes";
-import { usuariosRoutes } from "./routes/usuarios.routes";
-import { insumosRoutes } from "./routes/insumos.routes";
-import { fornecedoresRoutes } from "./routes/fornecedores.routes";
-import { movimentacoesRoutes } from "./routes/movimentacoes.routes";
+import { authRoutes } from "./routes/conta/auth.routes";
+import { usuariosRoutes } from "./routes/conta/usuarios.routes";
+import { insumosRoutes } from "./routes/estoque/insumos.routes";
+import { fornecedoresRoutes } from "./routes/estoque/fornecedores.routes";
+import { movimentacoesRoutes } from "./routes/estoque/movimentacoes.routes";
 
 /** Monta a API sem conectar ao banco nem abrir uma porta. */
 export async function criarApp(options: { logger?: boolean } = {}) {

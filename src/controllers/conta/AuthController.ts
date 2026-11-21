@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { PasswordResetService } from "../services/PasswordResetService";
+import { PasswordResetService } from "../../services/conta/PasswordResetService";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { AuthService } from "../services/AuthService";
-import { EmailConfirmationService } from "../services/EmailConfirmationService";
-import { LoginRequestDTO } from "../dtos/auth/LoginRequestDTO";
-import { mensagem } from "../dtos/comum/MensagemResponseDTO";
-import { UnauthorizedError } from "../errors/AppError";
+import { AuthService } from "../../services/conta/AuthService";
+import { EmailConfirmationService } from "../../services/conta/EmailConfirmationService";
+import { LoginRequestDTO } from "../../dtos/conta/LoginRequestDTO";
+import { mensagem } from "../../dtos/MensagemResponseDTO";
+import { UnauthorizedError } from "../../errors/AppError";
 
 export const AuthController = {
   async solicitarRecuperacao(request: FastifyRequest, reply: FastifyReply) {

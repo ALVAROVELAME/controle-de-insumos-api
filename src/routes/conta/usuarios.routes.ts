@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { UsuariosController } from "../controllers/UsuariosController";
-import { authenticate } from "../middlewares/authenticate";
+import { UsuariosController } from "../../controllers/conta/UsuariosController";
+import { authenticate } from "../../middlewares/authenticate";
 
 export async function usuariosRoutes(app: FastifyInstance) {
   app.post("/api/usuarios", UsuariosController.cadastrar);

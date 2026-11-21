@@ -1,8 +1,8 @@
-import { FornecedorRepository } from "../repositories/FornecedorRepository";
-import { InsumoRepository } from "../repositories/InsumoRepository";
-import { MovimentacaoRepository } from "../repositories/MovimentacaoRepository";
-import { ConflictError, NotFoundError } from "../errors/AppError";
-import type { CriarFornecedorDTOType } from "../dtos/fornecedores/FornecedorDTO";
+import { FornecedorRepository } from "../../repositories/estoque/FornecedorRepository";
+import { InsumoRepository } from "../../repositories/estoque/InsumoRepository";
+import { MovimentacaoRepository } from "../../repositories/estoque/MovimentacaoRepository";
+import { ConflictError, NotFoundError } from "../../errors/AppError";
+import type { CriarFornecedorDTOType } from "../../dtos/estoque/FornecedorDTO";
 
 export const FornecedorService = {
   listar: (usuarioId: string) =>

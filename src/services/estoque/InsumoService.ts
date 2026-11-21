@@ -1,8 +1,8 @@
-import { InsumoRepository } from "../repositories/InsumoRepository";
-import { FornecedorRepository } from "../repositories/FornecedorRepository";
-import { MovimentacaoRepository } from "../repositories/MovimentacaoRepository";
-import { ConflictError, NotFoundError } from "../errors/AppError";
-import type { CriarInsumoDTOType } from "../dtos/insumos/InsumoDTO";
+import { InsumoRepository } from "../../repositories/estoque/InsumoRepository";
+import { FornecedorRepository } from "../../repositories/estoque/FornecedorRepository";
+import { MovimentacaoRepository } from "../../repositories/estoque/MovimentacaoRepository";
+import { ConflictError, NotFoundError } from "../../errors/AppError";
+import type { CriarInsumoDTOType } from "../../dtos/estoque/InsumoDTO";
 
 export const InsumoService = {
   listar: (usuarioId: string) => InsumoRepository.findAllByUsuario(usuarioId),

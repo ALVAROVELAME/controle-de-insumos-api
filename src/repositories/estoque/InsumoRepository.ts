@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Insumo, IInsumo } from "../models/Insumo";
+import { Insumo, IInsumo } from "../../models/estoque/Insumo";
 
 const escaparRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

@@ -1,10 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { UsuarioService } from "../services/UsuarioService";
-import { UsuarioRepository } from "../repositories/UsuarioRepository";
-import { UsuarioCadastroDTO } from "../dtos/usuarios/UsuarioCadastroDTO";
-import { ExcluirContaRequestDTO } from "../dtos/usuarios/ExcluirContaRequestDTO";
-import { mensagem } from "../dtos/comum/MensagemResponseDTO";
-import { NotFoundError, UnauthorizedError } from "../errors/AppError";
+import { UsuarioService } from "../../services/conta/UsuarioService";
+import { UsuarioRepository } from "../../repositories/conta/UsuarioRepository";
+import { UsuarioCadastroDTO } from "../../dtos/conta/UsuarioCadastroDTO";
+import { ExcluirContaRequestDTO } from "../../dtos/conta/ExcluirContaRequestDTO";
+import { mensagem } from "../../dtos/MensagemResponseDTO";
+import { NotFoundError, UnauthorizedError } from "../../errors/AppError";
 
 export const UsuariosController = {
   async cadastrar(request: FastifyRequest, reply: FastifyReply) {

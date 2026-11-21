@@ -1,7 +1,7 @@
 import {
   CadastroPendente,
   ICadastroPendente,
-} from "../models/CadastroPendente";
+} from "../../models/conta/CadastroPendente";
 
 export const CadastroPendenteRepository = {
   findByToken: (token: string) =>

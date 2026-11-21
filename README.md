@@ -23,7 +23,7 @@ A API centraliza o cadastro de insumos e fornecedores e registra compras, vendas
 
 ### ✨ Funcionalidades
 
-- Cadastro, confirmação de e-mail, login e exclusão de conta com senha.
+- Cadastro, confirmação de e-mail, login, recuperação de senha e exclusão de conta com senha.
 - Consulta do usuário autenticado e proteção das rotas por token JWT.
 - Cadastro, listagem, atualização e exclusão de fornecedores e insumos.
 - Registro e edição de compras, vendas e ajustes, com cálculo de estoque e total.
@@ -41,7 +41,7 @@ A API centraliza o cadastro de insumos e fornecedores e registra compras, vendas
 | MongoDB e Mongoose | Persistência e modelos de dados |
 | Zod | Validação dos dados recebidos |
 | JSON Web Token e bcryptjs | Autenticação e hash de senhas |
-| Nodemailer | Envio de confirmação de cadastro via SMTP |
+| Nodemailer | Envio de confirmação de cadastro e recuperação de senha via SMTP |
 | Jest, Supertest e Node.js Test Runner | Testes HTTP e de regras de negócio |
 | Docker e GitHub Actions | Empacotamento e fluxo de deploy |
 
@@ -103,7 +103,7 @@ Use [`.env.example`](.env.example) como modelo. Não publique o arquivo `.env` n
 | `JWT_ISSUER` | Não | Emissor do JWT; padrão `controle-de-insumos-api`. |
 | `JWT_AUDIENCE` | Não | Audiência do JWT; padrão `controle-de-insumos-api`. |
 | `APP_BASE_URL` | Não | URL pública da API informada ao Swagger; padrão `http://localhost:3000`. |
-| `APP_FRONTEND_URL` | Não | URL base usada no link de confirmação; padrão `http://localhost:5173`. |
+| `APP_FRONTEND_URL` | Não | URL base usada nos links de confirmação e recuperação de senha; padrão `http://localhost:5173`. |
 | `CORS_ORIGIN` | Não | Origens permitidas, separadas por vírgula; padrão `http://localhost:5173`. |
 
 O link enviado por e-mail segue o formato `APP_FRONTEND_URL/confirmar?token=...`. A aplicação cliente precisa receber esse token e chamar a rota de confirmação da API. O token de confirmação do cadastro é válido por 24 horas. A validade do JWT é uma configuração independente.
@@ -115,13 +115,13 @@ O link enviado por e-mail segue o formato `APP_FRONTEND_URL/confirmar?token=...`
 | Comando | Descrição |
 | --- | --- |
 | `npm run dev` | Inicia o servidor de desenvolvimento com observação de arquivos. |
-| `npm run build` | Compila o TypeScript para `dist/`. |
+| `npm run build` | Remove o conteúdo anterior de `dist/` e compila o TypeScript novamente. |
 | `npm start` | Executa `dist/server.js` após a compilação. |
 | `npm run typecheck` | Verifica os tipos sem gerar arquivos. |
 | `npm test` | Executa os testes de regras de negócio e HTTP. |
 | `npm run test:unit` | Executa os testes com o Node.js Test Runner. |
-| `npm run test:http` | Compila e executa os testes HTTP com Jest e Supertest. |
-| `npm run test:coverage` | Gera a cobertura da suíte Jest em `coverage/`. |
+| `npm run test:http` | Compila e executa a suíte Jest, incluindo testes HTTP e de regras. |
+| `npm run test:coverage` | Compila e gera em `coverage/` o relatório de cobertura da suíte Jest. |
 
 ---
 
@@ -135,18 +135,24 @@ src/
 ├── server.ts            # Conexão com MongoDB e inicialização HTTP
 ├── config/              # Variáveis de ambiente
 ├── controllers/         # Entrada e resposta HTTP
+│   ├── conta/           # Autenticação e usuários
+│   └── estoque/         # Fornecedores, insumos e movimentações
 ├── database/            # Conexão com MongoDB
 ├── dtos/                # Contratos e validação
+│   ├── conta/           # Login, cadastro e exclusão de conta
+│   └── estoque/         # Fornecedores, insumos e movimentações
 ├── errors/              # Erros da aplicação
 ├── middlewares/         # Autenticação e tratamento de erros
-├── models/              # Modelos Mongoose
-├── repositories/        # Consultas e persistência
-├── routes/              # Registro dos endpoints
+├── models/              # Modelos Mongoose, separados em conta/ e estoque/
+├── repositories/        # Persistência, separada em conta/ e estoque/
+├── routes/              # Endpoints, separados em conta/ e estoque/
 ├── security/            # Geração e validação de JWT
-└── services/            # Regras de negócio e envio de e-mail
+└── services/            # Regras em conta/ e estoque/; e-mail e senhas compartilhados
 tests/
-├── http/                # Testes HTTP com Jest e Supertest
-└── unit/                # Testes de regras de negócio e SMTP local simulado
+├── http/                # Testes Jest HTTP e de regras, modelos e repositórios
+├── unit/                # Testes Node de regras e SMTP local simulado
+├── setup.cjs            # Ambiente isolado para Jest
+└── README.md            # Detalhes da execução e limitações
 ```
 
 ---
@@ -165,6 +171,14 @@ A confirmação é feita pela rota do frontend indicada em `APP_FRONTEND_URL`; e
 
 O cadastro pendente é gravado antes da tentativa de envio do e-mail. Se o envio falhar, o registro pendente pode permanecer; a implementação atual também não fornece uma rota de reenvio ou renovação de token expirado. Um novo cadastro com o mesmo e-mail pendente é recusado.
 
+### Recuperação de senha
+
+1. Envie `{ "email": "ana@example.com" }` para `POST /api/auth/forgot-password`. A resposta é genérica, inclusive quando a conta não existe ou está inativa.
+2. Para uma conta ativa, o e-mail contém um link `APP_FRONTEND_URL/reset-password?token=...`. O frontend deve receber o token e enviá-lo à API.
+3. Envie `{ "token": "<token>", "senha": "<nova-senha>" }` para `POST /api/auth/reset-password`. A senha deve ter de 6 a 100 caracteres e não pode conter apenas espaços.
+
+O token expira após uma hora, é armazenado como hash e pode ser usado uma única vez. Cada endpoint de recuperação aceita até 10 tentativas por IP em uma janela de 15 minutos; o limite fica na memória de cada processo. Em uma implantação com múltiplas instâncias, é necessário um limite compartilhado no proxy ou em armazenamento central.
+
 ---
 
 <a id="endpoints"></a>
@@ -178,6 +192,8 @@ O cadastro pendente é gravado antes da tentativa de envio do e-mail. Se o envio
 | GET | `/` | Não | Health check da API. |
 | POST | `/api/usuarios` | Não | Inicia o cadastro e envia o e-mail de confirmação. |
 | POST | `/api/auth/login` | Não | Autentica e retorna um JWT. |
+| POST | `/api/auth/forgot-password` | Não | Solicita um link de recuperação para o e-mail informado. |
+| POST | `/api/auth/reset-password` | Não | Redefine a senha usando um token de recuperação válido. |
 | GET | `/api/auth/confirmar?token=...` | Não | Confirma o cadastro pelo token. |
 | GET | `/api/auth/me` | Sim | Retorna dados do usuário autenticado. |
 | GET | `/api/usuarios/me` | Sim | Retorna dados da conta autenticada. |
@@ -313,9 +329,12 @@ Em erros tratados, a API normalmente retorna `{ "sucesso": false, "mensagem": ".
 ```sh
 npm test
 npm run typecheck
+npm run test:coverage
 ```
 
-Os testes simulam os repositórios; a suíte HTTP usa a aplicação Fastify com serviços simulados. O envio de e-mail é verificado também com um servidor SMTP local simulado. Eles não substituem testes com MongoDB e SMTP reais nem verificam concorrência ou deploy. Veja [tests/README.md](tests/README.md) para detalhes.
+`npm test` executa os testes de `tests/unit/` com o Node.js Test Runner e, após compilar o projeto, a suíte Jest em `tests/http/`. Os testes cobrem rotas HTTP, validações, regras de negócio e filtros dos repositórios; usam dados fictícios e simulam serviços, repositórios ou métodos dos modelos conforme o caso. Um teste verifica o envio de e-mail com um servidor SMTP local simulado.
+
+O relatório em `coverage/` considera apenas a suíte Jest, não os testes do Node em `tests/unit/`. A compilação limpa `dist/` antes de gerar os arquivos. Os testes atuais não substituem testes de integração com MongoDB e SMTP reais nem verificam concorrência ou deploy. Veja [tests/README.md](tests/README.md) para detalhes.
 
 ---
 
@@ -379,7 +398,3 @@ O `package.json` declara a licença ISC. Consulte o repositório para verificar 
 **Controle de Insumos API** · Gestão de insumos e estoque
 
 [⬆ Voltar ao topo](#topo)
-
-### Recuperação de senha
-
-`POST /api/auth/forgot-password` recebe `{ "email": "..." }` e retorna uma mensagem genérica. Para contas ativas, envia um link ao frontend configurado em `APP_FRONTEND_URL` usando o SMTP. `POST /api/auth/reset-password` recebe `{ "token": "...", "senha": "..." }`. O token expira em uma hora, é armazenado como hash e consumido uma única vez. A senha segue a regra de cadastro (6 a 100 caracteres). Os endpoints limitam tentativas por IP em memória; em produção com múltiplas instâncias, configure limite compartilhado no proxy ou em um armazenamento central.

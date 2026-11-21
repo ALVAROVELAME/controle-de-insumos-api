@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { FornecedoresController } from "../controllers/FornecedoresController";
-import { authenticate } from "../middlewares/authenticate";
+import { FornecedoresController } from "../../controllers/estoque/FornecedoresController";
+import { authenticate } from "../../middlewares/authenticate";
 
 export async function fornecedoresRoutes(app: FastifyInstance) {
   app.get("/api/fornecedores", { preHandler: authenticate }, FornecedoresController.listar);

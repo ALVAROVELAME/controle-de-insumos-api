@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "crypto";
-import { UsuarioRepository } from "../repositories/UsuarioRepository";
-import { EmailService } from "./EmailService";
-import { PasswordHasher } from "./PasswordHasher";
+import { UsuarioRepository } from "../../repositories/conta/UsuarioRepository";
+import { EmailService } from "../EmailService";
+import { PasswordHasher } from "../PasswordHasher";
 
 const digest = (token: string) => createHash("sha256").update(token).digest("hex");
 export const PasswordResetService = {

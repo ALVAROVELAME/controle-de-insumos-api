@@ -1,4 +1,4 @@
-import { Usuario, IUsuario } from "../models/Usuario";
+import { Usuario, IUsuario } from "../../models/conta/Usuario";
 
 export const UsuarioRepository = {
   findById: (id: string) => Usuario.findById(id),

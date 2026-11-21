@@ -1,4 +1,4 @@
-import { Fornecedor, IFornecedor } from "../models/Fornecedor";
+import { Fornecedor, IFornecedor } from "../../models/estoque/Fornecedor";
 
 const escaparRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

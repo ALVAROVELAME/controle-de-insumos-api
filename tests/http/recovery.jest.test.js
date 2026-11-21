@@ -1,8 +1,8 @@
 const request = require('supertest');
 const { createHash } = require('crypto');
 const { criarApp } = require('../../dist/app');
-const { PasswordResetService } = require('../../dist/services/PasswordResetService');
-const { UsuarioRepository } = require('../../dist/repositories/UsuarioRepository');
+const { PasswordResetService } = require('../../dist/services/conta/PasswordResetService');
+const { UsuarioRepository } = require('../../dist/repositories/conta/UsuarioRepository');
 const { EmailService } = require('../../dist/services/EmailService');
 const { PasswordHasher } = require('../../dist/services/PasswordHasher');
 let app;

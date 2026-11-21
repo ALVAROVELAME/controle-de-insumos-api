@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { MovimentacoesController } from "../controllers/MovimentacoesController";
-import { authenticate } from "../middlewares/authenticate";
+import { MovimentacoesController } from "../../controllers/estoque/MovimentacoesController";
+import { authenticate } from "../../middlewares/authenticate";
 
 export async function movimentacoesRoutes(app: FastifyInstance) {
   app.get("/api/movimentacoes", { preHandler: authenticate }, MovimentacoesController.listar);

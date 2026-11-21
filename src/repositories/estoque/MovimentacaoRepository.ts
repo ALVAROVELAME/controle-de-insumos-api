@@ -1,4 +1,4 @@
-import { Movimentacao, IMovimentacao } from "../models/Movimentacao";
+import { Movimentacao, IMovimentacao } from "../../models/estoque/Movimentacao";
 import { Types } from "mongoose";
 
 export const MovimentacaoRepository = {

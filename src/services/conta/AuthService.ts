@@ -1,8 +1,8 @@
-import { UsuarioRepository } from "../repositories/UsuarioRepository";
-import { PasswordHasher } from "./PasswordHasher";
-import { JwtTokenGenerator } from "../security/JwtTokenGenerator";
-import { LoginRequestDTOType } from "../dtos/auth/LoginRequestDTO";
-import { IUsuario } from "../models/Usuario";
+import { UsuarioRepository } from "../../repositories/conta/UsuarioRepository";
+import { PasswordHasher } from "../PasswordHasher";
+import { JwtTokenGenerator } from "../../security/JwtTokenGenerator";
+import { LoginRequestDTOType } from "../../dtos/conta/LoginRequestDTO";
+import { IUsuario } from "../../models/conta/Usuario";
 
 export interface LoginResponse {
   sucesso: boolean;

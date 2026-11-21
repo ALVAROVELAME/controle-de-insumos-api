@@ -1,39 +1,39 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { FornecedorService } from "../services/FornecedorService";
-import { CriarFornecedorDTO } from "../dtos/fornecedores/FornecedorDTO";
+import { InsumoService } from "../../services/estoque/InsumoService";
+import { CriarInsumoDTO } from "../../dtos/estoque/InsumoDTO";
 
-export const FornecedoresController = {
+export const InsumosController = {
   async listar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
-    const lista = await FornecedorService.listar(usuarioId);
+    const lista = await InsumoService.listar(usuarioId);
     return reply.send(lista);
   },
 
   async criar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
-    const dto = CriarFornecedorDTO.parse(request.body);
-    const fornecedor = await FornecedorService.criar(dto, usuarioId);
-    return reply.status(201).send(fornecedor);
+    const dto = CriarInsumoDTO.parse(request.body);
+    const insumo = await InsumoService.criar(dto, usuarioId);
+    return reply.status(201).send(insumo);
   },
 
   async atualizar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
     const { id } = request.params as { id: string };
-    const dto = CriarFornecedorDTO.parse(request.body);
-    const fornecedor = await FornecedorService.atualizar(id, dto, usuarioId);
-    return reply.send(fornecedor);
+    const dto = CriarInsumoDTO.parse(request.body);
+    const insumo = await InsumoService.atualizar(id, dto, usuarioId);
+    return reply.send(insumo);
   },
 
   async excluir(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
     const { id } = request.params as { id: string };
-    await FornecedorService.excluir(id, usuarioId);
+    await InsumoService.excluir(id, usuarioId);
     return reply.status(204).send();
   },
 
   async zerar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
-    await FornecedorService.zerar(usuarioId);
+    await InsumoService.zerar(usuarioId);
     return reply.status(204).send();
   },
 };

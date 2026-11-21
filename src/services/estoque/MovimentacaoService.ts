@@ -1,9 +1,9 @@
-import { MovimentacaoRepository } from "../repositories/MovimentacaoRepository";
-import { InsumoRepository } from "../repositories/InsumoRepository";
-import { FornecedorRepository } from "../repositories/FornecedorRepository";
-import { AppError, NotFoundError } from "../errors/AppError";
-import type { CriarMovimentacaoDTOType } from "../dtos/movimentacoes/MovimentacaoDTO";
-import type { TipoMov } from "../models/Movimentacao";
+import { MovimentacaoRepository } from "../../repositories/estoque/MovimentacaoRepository";
+import { InsumoRepository } from "../../repositories/estoque/InsumoRepository";
+import { FornecedorRepository } from "../../repositories/estoque/FornecedorRepository";
+import { AppError, NotFoundError } from "../../errors/AppError";
+import type { CriarMovimentacaoDTOType } from "../../dtos/estoque/MovimentacaoDTO";
+import type { TipoMov } from "../../models/estoque/Movimentacao";
 
 function calcularDeltaEstoque(tipo: TipoMov, quantidade: number): number {
   if (tipo === "Venda") return -Math.abs(quantidade);

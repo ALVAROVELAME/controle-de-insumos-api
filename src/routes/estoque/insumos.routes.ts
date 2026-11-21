@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { InsumosController } from "../controllers/InsumosController";
-import { authenticate } from "../middlewares/authenticate";
+import { InsumosController } from "../../controllers/estoque/InsumosController";
+import { authenticate } from "../../middlewares/authenticate";
 
 export async function insumosRoutes(app: FastifyInstance) {
   app.get("/api/insumos", { preHandler: authenticate }, InsumosController.listar);

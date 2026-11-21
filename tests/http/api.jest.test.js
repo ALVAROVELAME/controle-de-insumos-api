@@ -1,13 +1,13 @@
 const request = require('supertest');
 const { criarApp } = require('../../dist/app');
 const { JwtTokenGenerator } = require('../../dist/security/JwtTokenGenerator');
-const { AuthService } = require('../../dist/services/AuthService');
-const { UsuarioService } = require('../../dist/services/UsuarioService');
-const { EmailConfirmationService } = require('../../dist/services/EmailConfirmationService');
-const { InsumoService } = require('../../dist/services/InsumoService');
-const { FornecedorService } = require('../../dist/services/FornecedorService');
-const { MovimentacaoService } = require('../../dist/services/MovimentacaoService');
-const { UsuarioRepository } = require('../../dist/repositories/UsuarioRepository');
+const { AuthService } = require('../../dist/services/conta/AuthService');
+const { UsuarioService } = require('../../dist/services/conta/UsuarioService');
+const { EmailConfirmationService } = require('../../dist/services/conta/EmailConfirmationService');
+const { InsumoService } = require('../../dist/services/estoque/InsumoService');
+const { FornecedorService } = require('../../dist/services/estoque/FornecedorService');
+const { MovimentacaoService } = require('../../dist/services/estoque/MovimentacaoService');
+const { UsuarioRepository } = require('../../dist/repositories/conta/UsuarioRepository');
 const { ConflictError, NotFoundError } = require('../../dist/errors/AppError');
 
 const usuarioId = 'usuario-1';

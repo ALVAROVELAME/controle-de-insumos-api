@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { AuthController } from "../controllers/AuthController";
-import { authenticate } from "../middlewares/authenticate";
+import { AuthController } from "../../controllers/conta/AuthController";
+import { authenticate } from "../../middlewares/authenticate";
 
 // Limite por processo; em multiplas instancias, use um armazenamento compartilhado.
 const tentativas = new Map<string, { total: number; ate: number }>();

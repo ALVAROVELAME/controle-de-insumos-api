@@ -1,39 +1,39 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { MovimentacaoService } from "../services/MovimentacaoService";
-import { CriarMovimentacaoDTO } from "../dtos/movimentacoes/MovimentacaoDTO";
+import { FornecedorService } from "../../services/estoque/FornecedorService";
+import { CriarFornecedorDTO } from "../../dtos/estoque/FornecedorDTO";
 
-export const MovimentacoesController = {
+export const FornecedoresController = {
   async listar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
-    const lista = await MovimentacaoService.listar(usuarioId);
+    const lista = await FornecedorService.listar(usuarioId);
     return reply.send(lista);
   },
 
   async criar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
-    const dto = CriarMovimentacaoDTO.parse(request.body);
-    const mov = await MovimentacaoService.criar(dto, usuarioId);
-    return reply.status(201).send(mov);
+    const dto = CriarFornecedorDTO.parse(request.body);
+    const fornecedor = await FornecedorService.criar(dto, usuarioId);
+    return reply.status(201).send(fornecedor);
   },
 
   async atualizar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
     const { id } = request.params as { id: string };
-    const dto = CriarMovimentacaoDTO.parse(request.body);
-    const mov = await MovimentacaoService.atualizar(id, dto, usuarioId);
-    return reply.send(mov);
+    const dto = CriarFornecedorDTO.parse(request.body);
+    const fornecedor = await FornecedorService.atualizar(id, dto, usuarioId);
+    return reply.send(fornecedor);
   },
 
   async excluir(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
     const { id } = request.params as { id: string };
-    await MovimentacaoService.excluir(id, usuarioId);
+    await FornecedorService.excluir(id, usuarioId);
     return reply.status(204).send();
   },
 
   async zerar(request: FastifyRequest, reply: FastifyReply) {
     const usuarioId = request.usuario!.id;
-    await MovimentacaoService.zerar(usuarioId);
+    await FornecedorService.zerar(usuarioId);
     return reply.status(204).send();
   },
 };

@@ -1,5 +1,5 @@
-import { CadastroPendenteRepository } from "../repositories/CadastroPendenteRepository";
-import { UsuarioRepository } from "../repositories/UsuarioRepository";
+import { CadastroPendenteRepository } from "../../repositories/conta/CadastroPendenteRepository";
+import { UsuarioRepository } from "../../repositories/conta/UsuarioRepository";
 
 export const EmailConfirmationService = {
   async confirmarEmail(token: string): Promise<boolean> {
