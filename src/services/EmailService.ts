@@ -12,6 +12,13 @@ const transporter = nodemailer.createTransport({
 });
 
 export const EmailService = {
+  async enviarEmailRecuperacao(email: string, token: string): Promise<void> {
+    const link = `${env.appFrontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
+    await transporter.sendMail({
+      from: env.mail.from, to: email, subject: "Recuperacao de senha - Controle de Insumos",
+      text: `Recebemos uma solicitacao de recuperacao de senha. Acesse o link abaixo para criar uma nova senha:\n\n${link}\n\nO link vale por 1 hora e pode ser usado uma vez. Se voce nao fez esta solicitacao, ignore este email.`,
+    });
+  },
   async enviarEmailConfirmacao(
     email: string,
     nome: string,

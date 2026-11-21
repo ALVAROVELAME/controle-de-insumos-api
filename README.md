@@ -379,3 +379,7 @@ O `package.json` declara a licença ISC. Consulte o repositório para verificar 
 **Controle de Insumos API** · Gestão de insumos e estoque
 
 [⬆ Voltar ao topo](#topo)
+
+### Recuperação de senha
+
+`POST /api/auth/forgot-password` recebe `{ "email": "..." }` e retorna uma mensagem genérica. Para contas ativas, envia um link ao frontend configurado em `APP_FRONTEND_URL` usando o SMTP. `POST /api/auth/reset-password` recebe `{ "token": "...", "senha": "..." }`. O token expira em uma hora, é armazenado como hash e consumido uma única vez. A senha segue a regra de cadastro (6 a 100 caracteres). Os endpoints limitam tentativas por IP em memória; em produção com múltiplas instâncias, configure limite compartilhado no proxy ou em um armazenamento central.

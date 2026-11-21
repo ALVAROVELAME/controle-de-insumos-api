@@ -1,0 +1,31 @@
+const request = require('supertest');
+const { createHash } = require('crypto');
+const { criarApp } = require('../../dist/app');
+const { PasswordResetService } = require('../../dist/services/PasswordResetService');
+const { UsuarioRepository } = require('../../dist/repositories/UsuarioRepository');
+const { EmailService } = require('../../dist/services/EmailService');
+const { PasswordHasher } = require('../../dist/services/PasswordHasher');
+let app;
+beforeAll(async () => { app = await criarApp({ logger: false }); await app.ready(); });
+afterAll(async () => app.close());
+afterEach(() => jest.restoreAllMocks());
+test('solicitacao responde igualmente para conta existente ou desconhecida e nao armazena token puro', async () => {
+ const buscar = jest.spyOn(UsuarioRepository, 'findByEmail').mockResolvedValueOnce({ _id: '1', ativo: true, email: 'ana@example.com' }).mockResolvedValueOnce(null);
+ const salvar = jest.spyOn(UsuarioRepository, 'definirRecuperacao').mockResolvedValue({});
+ const enviar = jest.spyOn(EmailService, 'enviarEmailRecuperacao').mockResolvedValue();
+ const a = await request(app.server).post('/api/auth/forgot-password').send({ email: 'ana@example.com' }).expect(200);
+ const b = await request(app.server).post('/api/auth/forgot-password').send({ email: 'outra@example.com' }).expect(200);
+ expect(a.body).toEqual(b.body); expect(buscar).toHaveBeenCalledTimes(2); expect(enviar).toHaveBeenCalledTimes(1);
+ const token = enviar.mock.calls[0][1]; expect(token).toMatch(/^[a-f0-9]{64}$/); expect(salvar.mock.calls[0][1]).toBe(createHash('sha256').update(token).digest('hex')); expect(salvar.mock.calls[0][2].getTime()).toBeGreaterThan(Date.now());
+ await request(app.server).post('/api/auth/forgot-password').send({ email: 'invalido' }).expect(400);
+});
+test('redefinicao aceita token uma vez, valida dados e atualiza hash', async () => {
+ const token = 'a'.repeat(64); let disponivel = true;
+ const consumir = jest.spyOn(UsuarioRepository, 'consumirRecuperacao').mockImplementation(async () => { if (!disponivel) return null; disponivel = false; return { _id: '1' }; });
+ await request(app.server).post('/api/auth/reset-password').send({ token, senha: 'novaSenha123' }).expect(200);
+ expect(consumir.mock.calls[0][0]).toBe(createHash('sha256').update(token).digest('hex')); expect(PasswordHasher.verify('novaSenha123', consumir.mock.calls[0][1])).toBe(true);
+ await request(app.server).post('/api/auth/reset-password').send({ token, senha: 'novaSenha123' }).expect(400);
+ await request(app.server).post('/api/auth/reset-password').send({ token, senha: 'abc' }).expect(400);
+ await request(app.server).post('/api/auth/reset-password').send({ token: 'invalido', senha: 'senha123' }).expect(400);
+});
+test('token expirado ou desconhecido e recusado', async () => { jest.spyOn(UsuarioRepository, 'consumirRecuperacao').mockResolvedValue(null); expect(await PasswordResetService.redefinir('b'.repeat(64), 'senha123')).toBe(false); });

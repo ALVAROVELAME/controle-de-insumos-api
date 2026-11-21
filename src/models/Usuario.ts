@@ -5,6 +5,8 @@ export interface IUsuario extends Document {
   email: string;
   senhaHash: string;
   ativo: boolean;
+  recuperacaoHash?: string | null;
+  recuperacaoExpiraEm?: Date | null;
   tokenConfirmacao?: string | null;
   tokenExpiraEm?: Date | null;
   emailConfirmadoEm?: Date | null;
@@ -25,6 +27,8 @@ const UsuarioSchema = new Schema<IUsuario>(
     },
     senhaHash: { type: String, required: true },
     ativo: { type: Boolean, default: false },
+    recuperacaoHash: { type: String, default: null },
+    recuperacaoExpiraEm: { type: Date, default: null },
     tokenConfirmacao: { type: String, unique: true, sparse: true, default: null },
     tokenExpiraEm: { type: Date, default: null },
     emailConfirmadoEm: { type: Date, default: null },
